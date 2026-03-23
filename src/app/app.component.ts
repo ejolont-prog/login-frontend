@@ -46,14 +46,19 @@ export class AppComponent {
     if (this.loginForm.valid) {
       console.log("Enviando al backend:", this.loginForm.value);
 
-      // AQUÍ ESTÁ LA CONEXIÓN AL SERVICIO
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
           console.log("¡Éxito! Respuesta del servidor:", response);
-          // Aquí puedes redirigir al usuario o guardar el token
+
+          // EXTRAEMOS EL TOKEN (Ajusta 'token' si tu Java lo devuelve con otro nombre)
+          const token = response.token || response;
+
+          // LA ALERTA MÁGICA
+          alert("¡Conexión Exitosa! Este es tu token:\n\n" + JSON.stringify(token));
         },
         error: (error) => {
           console.error("¡Error al conectar con el backend!", error);
+          alert("Error al conectar: " + error.message);
         }
       });
 
