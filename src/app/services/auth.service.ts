@@ -7,7 +7,13 @@ import { Observable } from 'rxjs';
 })
 export class AuthService {
   // 2. Define la URL de tu API
-  private apiUrl = 'http://localhost:8084/api/auth/login';
+ 
+
+  // BUSCA ESTA LÍNEA
+// private apiUrl = 'http://localhost:8084/api/auth/login';
+
+// Y CÁMBIALA POR ESTA (La de tu Heroku):
+  private apiUrl = 'https://loginsingenio.netlify.app//api/auth/login';
 
   // 3. Inyecta el HttpClient en el constructor
   constructor(private http: HttpClient) { }
