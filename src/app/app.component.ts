@@ -48,22 +48,39 @@ export class AppComponent {
 
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
+          // 'response' es el objeto AuthResponse de Java: { token: '...', rol: '...' }
           console.log("¡Éxito! Respuesta del servidor:", response);
 
-          // EXTRAEMOS EL TOKEN (Ajusta 'token' si tu Java lo devuelve con otro nombre)
-          const token = response.token || response;
+          const token = response.token;
+          // Limpiamos el rol (minúsculas y sin espacios) por seguridad
+          const rol = response.rol.toLowerCase().trim();
 
-          // LA ALERTA MÁGICA
-          alert("¡Conexión Exitosa! Este es tu token:\n\n" + JSON.stringify(token));
+          // --- LÓGICA DE REDIRECCIÓN A NETLIFY ---
+
+          if (rol === 'agricultor') {
+            // Una sola barra antes del #
+            window.location.href = `https://agricultor.netlify.app/#token=${token}`;
+          }
+          else if (rol === 'pesocabal') {
+            window.location.href = `https://pesocabal.netlify.app/#token=${token}`;
+          }
+          else if (rol === 'beneficio') {
+            // Asegúrate de que el nombre del subdominio sea el exacto de Netlify
+            window.location.href = `https://beneficiofront.netlify.app/#token=${token}`;
+          }
+          else {
+            alert("Rol no reconocido: " + rol);
+          }
         },
         error: (error) => {
           console.error("¡Error al conectar con el backend!", error);
-          alert("Error al conectar: " + error.message);
+          alert("Error de autenticación: Verifique sus credenciales.");
         }
       });
 
     } else {
       console.log("Formulario inválido");
+      alert("Por favor, rellene todos los campos.");
     }
   }
 
