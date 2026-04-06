@@ -59,14 +59,14 @@ export class AppComponent {
 
           if (rol === 'agricultor') {
             // Una sola barra antes del #
-            window.location.href = `https://agricultor.netlify.app/#token=${token}`;
+            window.location.href = `https://agricultor.netlify.app/?token=${token}`;
           }
           else if (rol === 'pesocabal') {
-            window.location.href = `https://pesocabal.netlify.app/#token=${token}`;
+            window.location.href = `https://pesocabal.netlify.app/?token=${token}`;
           }
           else if (rol === 'beneficio') {
             // Asegúrate de que el nombre del subdominio sea el exacto de Netlify
-            window.location.href = `https://beneficiofront.netlify.app/#token=${token}`;
+            window.location.href = `https://beneficiofront.netlify.app/?token=${token}`;
           }
           else {
             alert("Rol no reconocido: " + rol);
