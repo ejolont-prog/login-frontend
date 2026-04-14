@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
+
 // 1. IMPORTANTE: Agregar Validators a la importación
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -10,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../app/services/auth.service';
-
+import { REDIRECT_URLS } from '../app/api.config';
 
 // 2. IMPORTANTE: Agregar MatSelectModule
 import { MatSelectModule } from '@angular/material/select';
@@ -58,15 +59,13 @@ export class AppComponent {
           // --- LÓGICA DE REDIRECCIÓN A NETLIFY ---
 
           if (rol === 'agricultor') {
-            // Una sola barra antes del #
-            window.location.href = `https://agricultor.netlify.app/?token=${token}`;
+            window.location.href = `${REDIRECT_URLS.agricultor}/?token=${token}`;
           }
           else if (rol === 'pesocabal') {
-            window.location.href = `https://pesocabal.netlify.app/?token=${token}`;
+            window.location.href = `${REDIRECT_URLS.pesocabal}/?token=${token}`;
           }
           else if (rol === 'beneficio') {
-            // Asegúrate de que el nombre del subdominio sea el exacto de Netlify
-            window.location.href = `https://beneficiofront.netlify.app/?token=${token}`;
+            window.location.href = `${REDIRECT_URLS.beneficio}/?token=${token}`;
           }
           else {
             alert("Rol no reconocido: " + rol);
