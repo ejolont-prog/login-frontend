@@ -5,7 +5,7 @@ export const API_BASE_URL = 'http://localhost:8084/api/auth';
 export const REDIRECT_URLS = {
   agricultor: 'http://localhost:4500',
   pesocabal: 'http://localhost:4400',
-  beneficio: 'http://localhost:4203'
+  beneficio: 'http://localhost:4600'
 }
 
 
