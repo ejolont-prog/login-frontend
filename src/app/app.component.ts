@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../app/services/auth.service';
 import { REDIRECT_URLS } from '../app/api.config';
+import Swal from 'sweetalert2'; // <--- Importar SweetAlert
 
 @Component({
   selector: 'app-root',
@@ -96,35 +97,73 @@ export class AppComponent implements OnInit {
 
   onLogin() {
     if (this.loginForm.valid) {
+
+      Swal.fire({
+        title: 'Validando credenciales',
+        text: 'Conectando con el sistema...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
+          Swal.close();
           const token = response.token;
           const rol = (response.rol || response.role).toLowerCase().trim();
-
-          // Guardamos el token en el LocalStorage del puerto 4200 (Login)
           this.authService.setToken(token);
 
-          // Redirección inicial pasando el token por URL a la app destino
-          if (rol === 'agricultor') {
-            window.location.href = `${REDIRECT_URLS.agricultor}/?token=${token}`;
-          }
-          else if (rol === 'pesocabal') {
-            window.location.href = `${REDIRECT_URLS.pesocabal}/?token=${token}`;
-          }
-          else if (rol === 'beneficio') {
-            window.location.href = `${REDIRECT_URLS.beneficio}/?token=${token}`;
-          }
-          else {
-            alert("Rol no reconocido: " + rol);
-          }
+          // Alerta de éxito antes de redirigir
+          Swal.fire({
+            icon: 'success',
+            title: '¡Bienvenido!',
+            text: 'Sesión iniciada correctamente',
+            timer: 1500,
+            showConfirmButton: false
+          }).then(() => {
+            const targetUrls: any = {
+              'agricultor': `${REDIRECT_URLS.agricultor}/?token=${token}`,
+              'pesocabal': `${REDIRECT_URLS.pesocabal}/?token=${token}`,
+              'beneficio': `${REDIRECT_URLS.beneficio}/?token=${token}`
+            };
+            window.location.href = targetUrls[rol];
+          });
         },
         error: (error) => {
-          console.error("Error de autenticación", error);
-          alert("Error: Verifique sus credenciales.");
+          Swal.close();
+
+          // Lógica de errores específicos según el status del HTTP
+          let mensajeError = 'Hubo un problema al conectar con el servidor.';
+          let tituloError = 'Error de conexión';
+
+          if (error.status === 401) {
+            tituloError = 'Contraseña Incorrecta';
+            mensajeError = 'La contraseña ingresada no es la correcta.';
+          } else if (error.status === 404) {
+            tituloError = 'Usuario no encontrado';
+            mensajeError = 'El nombre de usuario no existe en el sistema.';
+          } else if (error.status === 403) {
+            tituloError = 'Acceso denegado';
+            mensajeError = 'Tu usuario no tiene permisos para entrar a este rol.';
+          }
+
+          Swal.fire({
+            icon: 'error',
+            title: tituloError,
+            text: mensajeError,
+            confirmButtonColor: '#2c3e50',
+            confirmButtonText: 'Reintentar'
+          });
         }
       });
     } else {
-      alert("Por favor, rellene todos los campos.");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Atención',
+        text: 'Debes completar todos los campos del formulario.',
+        confirmButtonColor: '#2c3e50'
+      });
     }
   }
 }
